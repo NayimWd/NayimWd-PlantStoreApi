@@ -10,7 +10,7 @@ app.use(express.json());
 
 app.get("/", (req, res)=>{
 res.send("ok")
-})
+});
 
 app.listen(PORT, ()=>{
     console.log("running port:", PORT)
