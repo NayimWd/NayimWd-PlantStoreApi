@@ -1,5 +1,11 @@
-import express from 'express';
+import express from "express";
+import dotenv from "dotenv";
+import connectDB from "./db";
 
+// dotenv configure
+dotenv.config({
+  path: "./.env",
+});
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -7,11 +13,13 @@ const PORT = process.env.PORT || 8000;
 // Middleware
 app.use(express.json());
 
-
-app.get("/", (req, res)=>{
-res.send("ok")
-});
-
-app.listen(PORT, ()=>{
-    console.log("running port:", PORT)
-})
+// Database connection
+connectDB()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log("Server running on port:", PORT);
+    });
+  })
+  .catch((err) => {
+    console.log("Mongodb connection failed!!", err);
+  });
