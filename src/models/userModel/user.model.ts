@@ -29,14 +29,6 @@ const userSchema: Schema<IUser> = new Schema(
       type: String,
       required: [true, "password is required"],
     },
-    address: {
-      type: String,
-      required: [true, "address is required"],
-    },
-    city: {
-      type: String,
-      required: [true, "city is required"],
-    },
     phoneNumber: {
       type: Number,
       required: [true, "number is required"],

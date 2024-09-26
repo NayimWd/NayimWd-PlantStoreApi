@@ -13,9 +13,9 @@ const productSchema: Schema<Iproduct> = new Schema(
       required: [true, "name is required"],
     },
     category: {
-      type: String,
-      enum: ["flower", "fruit", "herb", "indoor", "garden"],
-      default: "garden",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: [true, "product category is required"]
     },
     size: {
       type: String,
@@ -28,11 +28,7 @@ const productSchema: Schema<Iproduct> = new Schema(
     },
     stock: {
       type: Number,
-      required: [true, "stock is required"],
-    },
-    qty: {
-      type: Number,
-      required: [true, "Qty is required"],
+      default : 0,
     },
     isActive: {
       type: Boolean,

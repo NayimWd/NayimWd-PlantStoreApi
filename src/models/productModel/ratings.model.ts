@@ -3,7 +3,7 @@ import { IReview } from "../../types/productTypes";
 
 const reviewSchema: Schema<IReview> = new Schema(
   {
-    userId: {
+    ratingBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: [true, "user is required"],
@@ -27,9 +27,10 @@ const reviewSchema: Schema<IReview> = new Schema(
     },
     comment: {
       type: String,
+      required: [true, "Comment is required"]
     },
   },
   { timestamps: true }
 );
 
-export const Review = mongoose.model("Review", reviewSchema);
+export const Review = mongoose.model<IReview>("Review", reviewSchema);
