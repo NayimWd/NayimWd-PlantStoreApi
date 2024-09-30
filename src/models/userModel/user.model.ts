@@ -78,7 +78,7 @@ userSchema.methods.generateAccessToken = async function (): Promise<string> {
 };
 
 userSchema.methods.generateRefreshToken = async function (): Promise<string> {
-  return await jwt.sign(
+  return jwt.sign(
     {
       _id: this._id,
     },

@@ -1,13 +1,13 @@
 import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./db";
-
+import { app} from "./app/app";
 // dotenv configure
 dotenv.config({
   path: "./.env",
 });
 
-const app = express();
+
 const PORT = process.env.PORT || 8000;
 
 // Middleware
