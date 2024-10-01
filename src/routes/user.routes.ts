@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { register } from "../controllers/user.controller";
 
 const router: Router = Router();
 
@@ -14,7 +15,7 @@ const user_routes: IUserRoute = {
     login: "/login"
 }
 
-
+router.route(user_routes.register).post(register)
 
 
 
