@@ -4,8 +4,8 @@ export interface IUser extends Document {
     name: string,
     email: string,
     password: string,
-    phoneNumber: number,
-    avatar: string,
+    phoneNumber: string,
     role: "user" | "admin",
+    avatar: string,
     refreshToken: string
 }

@@ -15,6 +15,8 @@ const user_routes: IUserRoute = {
     login: "/login"
 }
 
+
+
 router.route(user_routes.register).post(register)
 
 

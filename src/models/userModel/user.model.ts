@@ -30,20 +30,20 @@ const userSchema: Schema<IUser> = new Schema(
       required: [true, "password is required"],
     },
     phoneNumber: {
-      type: Number,
+      type: String,
       required: [true, "number is required"],
       trim: true,
       minLength: 5,
       maxLength: 12,
     },
-    avatar: {
-      type: String, // cloudinary url
-      required: [true, "avatar is required"],
-    },
     role: {
       type: String,
       enum: ["user", "admin"],
       default: "user",
+    },
+    avatar: {
+      type: String, // cloudinary url
+      required: [true, "avatar is required"],
     },
     refreshToken: {
       type: String,
