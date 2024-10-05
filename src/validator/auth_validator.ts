@@ -1,8 +1,9 @@
 import {z} from "zod";
+import { IUser } from "../types/userTypes";
 
 // creating user schema using zod
 
-const registerSchema = z.object({
+const zodRegisterSchema = z.object({
     name: z.string({
         required_error: "Name is required"
     })
@@ -26,8 +27,8 @@ const registerSchema = z.object({
     .min(10, {message: "phone number must be minimum 10 character"})
     .max(15, {message: "phone number must be under 15 character"}),
     role: z.enum(["user", "admin"]).default("user"),
-    avater: z.string().url().optional(),
+    avatar: z.string().url().optional(),
     refreshToken: z.string().optional(),
 });
 
-export {registerSchema}
+export {zodRegisterSchema}

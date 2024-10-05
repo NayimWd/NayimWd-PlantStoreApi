@@ -1,5 +1,8 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
+import dotenv from "dotenv";
+
+dotenv.config()
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUDE_NAME,
@@ -19,11 +22,13 @@ const uploadOnCloudinary = async (localFilePath: any) => {
         { quality: 90 },
       ],
     });
-    // after file upload
-    console.log("file uploaded", response.url);
 
-    // Remove the local file after successful upload
-    fs.unlinkSync(localFilePath);
+
+      // Remove the local file after successful upload
+      if (fs.existsSync(localFilePath)) {
+        fs.unlinkSync(localFilePath);
+       
+      }
 
     return response;
   } catch (error) {
@@ -31,7 +36,7 @@ const uploadOnCloudinary = async (localFilePath: any) => {
     if (fs.existsSync(localFilePath)) {
       fs.unlinkSync(localFilePath);
     }
-    fs.unlinkSync(localFilePath); 
+    fs.unlinkSync(localFilePath);
     return null;
   }
 };

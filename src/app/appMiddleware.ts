@@ -13,10 +13,10 @@ const limiter = rateLimit({
 
 const appMiddleware = [
   express.json({
-    limit: "16kb",
+    limit: "160kb",
   }),
   express.static("public"),
-  express.urlencoded({ extended: true, limit: "16kb" }),
+  express.urlencoded({ extended: true, limit: "160kb" }),
   cookieParser(),
   cors({
     origin: process.env.CORS_ORIGIN,
