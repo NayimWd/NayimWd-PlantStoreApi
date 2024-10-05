@@ -1,6 +1,7 @@
 import multer, { StorageEngine } from "multer";
 import { Request } from "express";
 import { Callback } from "mongoose";
+import path from "path";
 // multer file upload
 const storage: StorageEngine = multer.diskStorage({
   destination: function (
@@ -8,7 +9,8 @@ const storage: StorageEngine = multer.diskStorage({
     file: Express.Multer.File,
     cb: Callback
   ) {
-    cb(null, "./public/temp");
+    const uploadPath = path.join(__dirname, '../../public/temp');
+    cb(null, uploadPath);
   },
   filename: function (req: Request, file: Express.Multer.File, cb: Callback) {
     cb(null, file.originalname);

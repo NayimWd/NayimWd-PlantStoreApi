@@ -3,7 +3,6 @@ import { IUser } from "../../types/userTypes";
 import bctypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-
 const userSchema: Schema<IUser> = new Schema(
   {
     name: {
