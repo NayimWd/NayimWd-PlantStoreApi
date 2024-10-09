@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { register } from "../controllers/user.controller";
+import { register } from "../controllers/users/index";
 import zodValidator from "../middlewares/validator.middleware";
-import { zodRegisterSchema } from "../validator/auth_validator";
+import { zodRegisterSchema, zodLoginSchema } from "../validator";
 import { upload } from "../middlewares/multer.middleware";
 
 const router: Router = Router();

@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
-import fs from 'fs';
-import { asyncHandler } from "../utils/asyncHandler";
-import { ApiError } from "../utils/ApiError";
-import { ApiResponse } from "../utils/ApiResponse";
-import { User } from "../models/userModel/user.model";
-import { uploadOnCloudinary } from "../utils/cloudinary";
+
+import { asyncHandler } from "../../utils/asyncHandler";
+import { ApiError } from "../../utils/ApiError";
+import { ApiResponse } from "../../utils/ApiResponse";
+import { User } from "../../models/userModel/user.model";
+import { uploadOnCloudinary } from "../../utils/cloudinary";
 
 // user register
-const register = asyncHandler(async (req: Request, res: Response) => {
+export const register = asyncHandler(async (req: Request, res: Response) => {
    
   const { name, email, password, phoneNumber } = req.body; // validation done with zod
 
@@ -16,6 +16,12 @@ const register = asyncHandler(async (req: Request, res: Response) => {
   if (existingUser) {
       throw new ApiError(409, "Email already exists!");
     }
+  // prevent duplicate number
+  const existingNumber = await User.findOne({phoneNumber});
+  if (existingNumber) {
+    throw new ApiError(409, "Phone number already exists!");
+  }
+
   // Access avatar file (special for ts)
   const avatarLocalPath = Array.isArray(req.files)
     ? req.files?.[0]?.path // For single file uploads
@@ -28,12 +34,7 @@ const register = asyncHandler(async (req: Request, res: Response) => {
 
   // uploading on cloudinary
   const avater = await uploadOnCloudinary(avatarLocalPath);
-  // Check if the file exists
-if (fs.existsSync(avatarLocalPath)) {
-    // Upload to Cloudinary or perform other actions
-  } else {
-    console.error('File does not exist:', avatarLocalPath);
-  }
+
 
   // validation avater
   if (!avater) {
@@ -63,4 +64,4 @@ if (fs.existsSync(avatarLocalPath)) {
     .json(new ApiResponse(200, createdUser, "User registerd successfully"));
 });
 
-export { register };
+

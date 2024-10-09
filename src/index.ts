@@ -2,10 +2,9 @@ import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./db";
 import { app} from "./app/app";
+
 // dotenv configure
-dotenv.config({
-  path: "./.env",
-});
+dotenv.config();
 
 
 const PORT = process.env.PORT || 8000;
@@ -14,12 +13,16 @@ const PORT = process.env.PORT || 8000;
 app.use(express.json());
 
 // Database connection
-connectDB()
-  .then(() => {
+const startServer = async () => {
+  try {
+    // Database connection
+    await connectDB();
     app.listen(PORT, () => {
       console.log("Server running on port:", PORT);
     });
-  })
-  .catch((err) => {
-    console.log("Mongodb connection failed!!", err);
-  });
+  } catch (err) {
+    console.log("MongoDB connection failed!!", err);
+  }
+};
+
+startServer();

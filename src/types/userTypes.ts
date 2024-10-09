@@ -7,5 +7,9 @@ export interface IUser extends Document {
     phoneNumber: string,
     role: "user" | "admin",
     avatar: string,
-    refreshToken: string
+    refreshToken: string,
+    // for mathods
+    isPasswordCorrect(password: string): Promise<boolean>,
+  generateAccessToken(): Promise<string>,
+  generateRefreshToken(): Promise<string>,
 }
