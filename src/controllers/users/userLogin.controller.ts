@@ -4,7 +4,7 @@ import { ApiResponse } from "../../utils/ApiResponse";
 import { asyncHandler } from "../../utils/asyncHandler";
 
 //reusable method for generate access and refresh token
-const generateAccessAndRefreshToken = async (userId: string) => {
+export const generateAccessAndRefreshToken = async (userId: string) => {
   try {
     // Find the user by ID
     const user = await User.findById(userId);
