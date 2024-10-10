@@ -12,8 +12,8 @@
     "types": ["node", "express"]
   },
   "include": [
-  "src/**/*.ts",
-  "types/**/*.d.ts"
-],
+    "src/**/*", // Include all source files
+    "src/types/**/*" // Include custom type declarations
+  ],
   "exclude": ["node_modules", "dist"]
 }
