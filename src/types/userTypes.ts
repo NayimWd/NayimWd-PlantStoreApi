@@ -8,8 +8,12 @@ export interface IUser extends Document {
     role: "user" | "admin",
     avatar: string,
     refreshToken: string,
+    resetPasswordToken?: string,
+  resetPasswordExpire?: Date,
     // for mathods
-    isPasswordCorrect(password: string): Promise<boolean>,
+  isPasswordCorrect(password: string): Promise<boolean>,
   generateAccessToken(): Promise<string>,
   generateRefreshToken(): Promise<string>,
+  generatePasswordResetToken():string,
+  
 }

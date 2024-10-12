@@ -2,6 +2,7 @@ import mongoose, { Schema } from "mongoose";
 import { IUser } from "../../types/userTypes";
 import bctypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import crypto from "crypto"
 
 const userSchema: Schema<IUser> = new Schema(
   {
@@ -47,6 +48,12 @@ const userSchema: Schema<IUser> = new Schema(
     refreshToken: {
       type: String,
     },
+    resetPasswordToken: {
+      type: String
+    },
+    resetPasswordExpire: {
+      type: Date,
+    }
   },
   { timestamps: true }
 );
@@ -88,6 +95,19 @@ userSchema.methods.generateRefreshToken = async function (): Promise<string> {
   );
 };
 
-userSchema.methods.generateRefreshToken = function () {};
+// Method to generate reset token
+userSchema.methods.generatePasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+
+  this.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  // Set token expiration time (e.g., 1 hour)
+  this.resetPasswordExpire = Date.now() + 60 * 60 * 1000;
+
+  return resetToken;
+};
 
 export const User = mongoose.model<IUser>("User", userSchema);
