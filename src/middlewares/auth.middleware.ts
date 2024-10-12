@@ -54,7 +54,7 @@ export const veryfyJWT = asyncHandler(async (req, res, next) => {
 // admin auth
 export const isAdmin = asyncHandler(async (req, res, next) => {
   if ((req as any).user?.role !== "admin") {
-    return res.status(403).json({
+    return res.status(401).json({
       success: false,
       message: "This user is not admin",
     });
