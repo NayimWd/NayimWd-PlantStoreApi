@@ -8,11 +8,12 @@ import {
   getCurrentUser,
   updateAccountDetails,
   updateAvatar,
+  getAllUsers
 } from "../controllers/users/index";
 import zodValidator from "../middlewares/validator.middleware";
 import { zodRegisterSchema, zodLoginSchema } from "../validator";
 import { upload } from "../middlewares/multer.middleware";
-import { veryfyJWT } from "../middlewares/auth.middleware";
+import { isAdmin, veryfyJWT } from "../middlewares/auth.middleware";
 
 const router: Router = Router();
 
@@ -24,6 +25,7 @@ interface IUserRoute {
   refreshToken: "/refreshToken";
   changePassword: "/changePassword";
   currentUser: "/currentUser";
+  allUsers: "/all_users";
   updateAccountDetails: "/update_account_details";
   updateAvatar: "/update_avatar";
 }
@@ -36,6 +38,7 @@ const user_routes: IUserRoute = {
   refreshToken: "/refreshToken",
   changePassword: "/changePassword",
   currentUser: "/currentUser",
+  allUsers: "/all_users",
   updateAccountDetails: "/update_account_details",
   updateAvatar: "/update_avatar",
 };
@@ -59,13 +62,15 @@ router.route(user_routes.logout).post(veryfyJWT, logOutUser);
 router.route(user_routes.refreshToken).post(refreshAccessToken);
 // get current user
 router.route(user_routes.currentUser).get(veryfyJWT, getCurrentUser);
+// get all user
+router.route(user_routes.allUsers).get(veryfyJWT, isAdmin, getAllUsers);
 // change password
-router.route(user_routes.changePassword).post(veryfyJWT, changeCurrentPassword);
+router.route(user_routes.changePassword).patch(veryfyJWT, changeCurrentPassword);
 // change user details
 router
   .route(user_routes.updateAccountDetails)
   .patch(veryfyJWT, updateAccountDetails);
   // change avtar
-router.route(user_routes.updateAvatar).patch(veryfyJWT, updateAvatar);
+router.route(user_routes.updateAvatar).patch(veryfyJWT, upload.single("avatar"), updateAvatar);
 
 export default router;

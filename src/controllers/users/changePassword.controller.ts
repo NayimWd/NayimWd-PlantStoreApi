@@ -3,8 +3,9 @@ import { User } from "../../models/userModel/user.model";
 import { ApiError } from "../../utils/ApiError";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { ApiResponse } from "../../utils/ApiResponse";
+import { Request, Response } from "express";
 
-export const changeCurrentPassword  = asyncHandler(async(req, res)=>{
+export const changeCurrentPassword  = asyncHandler(async(req: Request, res: Response)=>{
     // getting password from req
     const {oldPassword, newPassword} = req.body;
     // getting existing password

@@ -1,12 +1,14 @@
+import { Request, Response } from "express";
 import { User } from "../../models/userModel/user.model";
 import { ApiError } from "../../utils/ApiError";
 import { ApiResponse } from "../../utils/ApiResponse";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { uploadOnCloudinary } from "../../utils/cloudinary";
 
-export const updateAvatar = asyncHandler(async(req, res)=>{
+export const updateAvatar = asyncHandler(async(req: Request, res: Response)=>{
     // getting file
     const avatarLocalPath = req.file?.path;
+   
     // validating file
     if(!avatarLocalPath){
         new ApiError(
