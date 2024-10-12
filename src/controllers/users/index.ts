@@ -6,6 +6,7 @@ import { changeCurrentPassword } from "./changePassword.controller";
 import { getCurrentUser, getAllUsers } from "./getUser.controller";
 import { updateAccountDetails } from "./updateAccount.controller";
 import { updateAvatar } from "./updateAvatar.controller";
+import { forgotPassword, resetPassword } from "./forgetPassword.controller";
 
 export  {
     register,
@@ -16,5 +17,7 @@ export  {
     getCurrentUser,
     getAllUsers,
     updateAccountDetails,
-    updateAvatar
+    updateAvatar,
+    forgotPassword,
+    resetPassword
 }

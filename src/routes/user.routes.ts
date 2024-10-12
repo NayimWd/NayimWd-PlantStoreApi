@@ -8,7 +8,9 @@ import {
   getCurrentUser,
   updateAccountDetails,
   updateAvatar,
-  getAllUsers
+  getAllUsers,
+  forgotPassword,
+  resetPassword
 } from "../controllers/users/index";
 import zodValidator from "../middlewares/validator.middleware";
 import { zodRegisterSchema, zodLoginSchema } from "../validator";
@@ -28,6 +30,8 @@ interface IUserRoute {
   allUsers: "/all_users";
   updateAccountDetails: "/update_account_details";
   updateAvatar: "/update_avatar";
+  forgotPassword: "/forgot_password";
+  resetPassword: "/reset_password/:token";
 }
 
 const user_routes: IUserRoute = {
@@ -41,6 +45,8 @@ const user_routes: IUserRoute = {
   allUsers: "/all_users",
   updateAccountDetails: "/update_account_details",
   updateAvatar: "/update_avatar",
+  forgotPassword: "/forgot_password",
+  resetPassword: "/reset_password/:token"
 };
 
 // routes
@@ -72,5 +78,8 @@ router
   .patch(veryfyJWT, updateAccountDetails);
   // change avtar
 router.route(user_routes.updateAvatar).patch(veryfyJWT, upload.single("avatar"), updateAvatar);
+// forgot password 
+router.route(user_routes.forgotPassword).post(veryfyJWT, forgotPassword);
+router.route(user_routes.resetPassword).put(veryfyJWT, resetPassword);
 
 export default router;
