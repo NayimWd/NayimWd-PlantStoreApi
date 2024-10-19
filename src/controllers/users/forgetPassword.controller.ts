@@ -10,7 +10,7 @@ import { ApiResponse } from "../../utils/ApiResponse";
 export const forgotPassword = asyncHandler(
   async (req: Request, res: Response) => {
     const { email } = req.body;
-  
+
     // checking user with this email
     const user = await User.findOne({ email });
 
@@ -54,35 +54,35 @@ export const forgotPassword = asyncHandler(
 );
 
 // reset password
-export const resetPassword = asyncHandler(async(req: Request, res: Response)=>{
-    const {password} = req.body;
+export const resetPassword = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { password } = req.body;
 
     // getting reset token from url and hash it for compare with the db
-    const resetToken = crypto.createHash("sha256").update(req.params.token).digest("hex");
+    const resetToken = crypto
+      .createHash("sha256")
+      .update(req.params.token)
+      .digest("hex");
 
     // Find the user with this token and check that the token hasn't expired
-  const user = await User.findOne({
-    resetPasswordToken: resetToken,
-    resetPasswordExpire: { $gt: Date.now() },  // Ensure token is not expired
-  });
+    const user = await User.findOne({
+      resetPasswordToken: resetToken,
+      resetPasswordExpire: { $gt: Date.now() }, // Ensure token is not expired
+    });
 
-  if (!user) {
-    throw new ApiError(400, "Invalid or expired token");
+    if (!user) {
+      throw new ApiError(400, "Invalid or expired token");
+    }
+
+    // Update the user's password and clear the reset token fields
+    user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+
+    await user.save();
+
+    res
+      .status(200)
+      .json(new ApiResponse(200, {}, "Password reset successfully"));
   }
-
-   // Update the user's password and clear the reset token fields
-   user.password = password;
-   user.resetPasswordToken = undefined;
-   user.resetPasswordExpire = undefined;
- 
-   await user.save();
- 
-   res.status(200).json(
-     new ApiResponse(
-       200,
-       {},
-       "Password reset successfully"
-     )
-   );
-
-})
+);
