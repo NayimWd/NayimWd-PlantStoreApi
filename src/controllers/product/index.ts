@@ -1,6 +1,8 @@
-import { category, getCategory } from "./createProduct.controller";
+import { category, getCategory } from "./createCategory.controller";
+import { createProduct } from "./createProduct.controller";
 
 export {
     category,
-    getCategory
+    getCategory,
+    createProduct
 }

@@ -19,8 +19,8 @@ const productSchema: Schema<Iproduct> = new Schema(
     },
     size: {
       type: String,
-      enum: ["S", "M", "L", "XL", "medium"],
-      default: "medium",
+      enum: ["S", "M", "L", "XL", "standard"],
+      default: "standard",
     },
     price: {
       type: Number,

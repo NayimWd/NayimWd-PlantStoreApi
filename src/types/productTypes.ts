@@ -4,7 +4,7 @@ export interface Iproduct extends Document {
   title: string;
   description: string;
   category: mongoose.Types.ObjectId;
-  size: "S" | "M" | "L" | "XL" | "medium";
+  size: "S" | "M" | "L" | "XL" | "standard";
   price: number;
   stock: number;
   isActive: boolean;
