@@ -38,7 +38,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 
   // validation avater
   if (!avater) {
-    throw new ApiError(400, "Avatar file is required");
+    throw new ApiError(400, "Avatar upload went wrong!");
   }
 
   const register = await User.create({
