@@ -61,5 +61,6 @@ export const createProduct = asyncHandler(async (req, res) => {
   // returning response
   return res
     .status(201)
-    .json(new ApiResponse(201, product, "Product successfully created"));
+    .json(new ApiResponse(
+      201, product, "Product successfully created"));
 });
