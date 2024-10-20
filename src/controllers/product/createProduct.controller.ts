@@ -25,10 +25,6 @@ export const createProduct = asyncHandler(async (req, res) => {
   }
 
   // getting product photo
-//   const photoLocalPath = Array.isArray(req.files)
-//     ? req.files?.[0]?.path // For single file uploads
-//     : req.files?.avatar?.[0]?.path; // For field-based uploads
-  // getting product photo
   const photoLocalPath = req.file?.path; // Correcting how we access the file
 
   if (!photoLocalPath) {
