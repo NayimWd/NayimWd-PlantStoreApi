@@ -16,14 +16,7 @@ const reviewSchema: Schema<IReview> = new Schema(
     rating: {
       type: Number,
       default: 0,
-    },
-    numberOfRatings: {
-      type: Number,
-      required: [true, "total rating required"],
-    },
-    averageRating: {
-      type: Number,
-      required: [true, "average rating is required"],
+      max: 5
     },
     comment: {
       type: String,

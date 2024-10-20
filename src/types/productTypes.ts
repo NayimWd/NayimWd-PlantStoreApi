@@ -15,8 +15,6 @@ export interface IReview extends Document {
   ratingBy: mongoose.Types.ObjectId;
   productId: mongoose.Types.ObjectId;
   rating: number;
-  numberOfRatings: number;
-  averageRating: number;
   comment: string;
 }
 
