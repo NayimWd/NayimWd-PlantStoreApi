@@ -10,9 +10,9 @@ export const createProduct = asyncHandler(async (req, res) => {
   // getting product date
   const { title, description, category, size, price, stock, isActive } =
     req.body;
-    if(!title || !description || !category || !size || !price || !stock){
+    // if(!title || !description || !category || !size || !price || !stock){
         
-    }
+    // }
 
   // converting number and boolean type
   const productPrice = Number(price);
