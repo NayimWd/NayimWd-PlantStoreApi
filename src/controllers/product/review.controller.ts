@@ -57,45 +57,53 @@ export const getAllReviewsOfProduct = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Product id required");
   }
 
-  // getting reviews
+  // getting reviews useing Aggregation pipeline
   const reviews = await Review.aggregate([
+    // 1st pipeline - matching product Id
     {
       $match: { productId: new mongoose.Types.ObjectId(pid) },
     },
+    // 2nd pipeline - getting user name by ratingBy field of reviews
     {
       $lookup: {
-        from: "users", // The name of the User collection
+        from: "users", // refering to User schema
         localField: "ratingBy",
         foreignField: "_id",
-        as: "userDetails",
+        as: "userDetails", // store user details as user
       },
     },
+    // 3rd pipeline - spread userDetails array
     {
-      $unwind: "$userDetails", // Flatten the user details array
+      $unwind: "$userDetails",
     },
+    // 4th pipeline - group these
     {
       $group: {
         _id: "$productId",
         reviews: {
           $push: {
-            rating: "$rating",
-            comment: "$comment",
-            userName: "$userDetails.name",
+            _id: "$_id",
+            rating: "$rating", // store in rating field
+            comment: "$comment", // user comment
+            userName: "$userDetails.name", // name of reviewer that got from 2 nd pipeline
           },
         },
+        // get total rating and number of ratings
         totalRating: { $sum: "$rating" },
-        numberOfReviews: { $sum: 1 },
+        numberOrReviews: { $sum: 1 },
       },
     },
+    // 5th - project data
     {
       $project: {
-        _id: 0,
+        _id: 1,
         reviews: 1,
+        // calculating average ratings
         averageRating: {
           $cond: {
-            if: { $eq: ["$numberOfReviews", 0] },
+            if: { $eq: ["$numberOrReviews", 0] },
             then: 0,
-            else: { $divide: ["$totalRating", "$numberOfReviews"] },
+            else: { $divide: ["$totalRating", "$numberOrReviews"] },
           },
         },
         numberOfReviews: 1,
@@ -111,3 +119,75 @@ export const getAllReviewsOfProduct = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, reviews, "All review fetched success"));
 });
+
+// review update
+export const updateReview = asyncHandler(async (req, res) => {
+  // get product and review id
+  const { pid, reviewId } = req.params;
+  // validate
+  if (!pid) {
+    throw new ApiError(400, "Product Id required");
+  }
+
+  // validate
+  if (!reviewId) {
+    throw new ApiError(400, "Review Id required");
+  }
+
+  // get user Id
+  const userId = (req as any).user._id;
+  // validate
+  if (!userId) {
+    throw new ApiError(400, "Invalid token, User Not found");
+  }
+
+  // check user already reviewd
+  const existingReview = await Review.findOne({
+    _id: reviewId,
+    productId: pid,
+    ratingBy: userId,
+  });
+
+  if (!existingReview) {
+    throw new ApiError(
+      404,
+      "Review not found or user is not authorized to update this review"
+    );
+  }
+
+  // get data to update
+  const { rating, comment } = req.body;
+
+  const updateData: any = {};
+
+  // check user posted update data or not
+  if (rating !== undefined) updateData.rating = rating;
+  if (comment !== undefined) updateData.comment = comment;
+
+  // update the review
+  const updateReview = await Review.findOneAndUpdate(
+    {
+      _id: reviewId,
+      productId: pid,
+      ratingBy: userId,
+    },
+    {
+      $set: updateData,
+    },
+    { new: true, runValidators: true }
+  );
+
+  // validate
+  if (!updateReview) {
+    throw new ApiError(400, "Failed to update review");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updateReview, "Review update successful"));
+});
+
+// delete review
+export const deleteProduct_Reviews = asyncHandler(async(req, res)=>{
+  
+})
