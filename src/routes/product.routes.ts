@@ -5,6 +5,7 @@ import {
   createRatings,
   deleteProduct,
   getAllProducts,
+  getAllReviewsOfProduct,
   getCategory,
   getSingleProduct,
   updateProductPhoto,
@@ -29,6 +30,7 @@ interface Iproduct {
   update_product_photo: "/update_product_photo/:pid";
   delete_product: "/delete_product/:pid";
   create_product_ratings: "/create_product_ratings/:pid";
+  get_all_reviews: "/get_all_reviews/:pid";
 }
 
 const product_routes: Iproduct = {
@@ -41,6 +43,7 @@ const product_routes: Iproduct = {
   update_product_photo: "/update_product_photo/:pid",
   delete_product: "/delete_product/:pid",
   create_product_ratings: "/create_product_ratings/:pid",
+  get_all_reviews: "/get_all_reviews/:pid"
 };
 
 // create category
@@ -70,6 +73,8 @@ router
   .route(product_routes.delete_product)
   .delete(veryfyJWT, isAdmin, deleteProduct);
 // create product ratings
-router.route(product_routes.create_product_ratings).post(veryfyJWT, createRatings)
+router.route(product_routes.create_product_ratings).post(veryfyJWT, createRatings);
+// get all reviews of product
+router.route(product_routes.get_all_reviews).get(getAllReviewsOfProduct)
 
 export default router;
