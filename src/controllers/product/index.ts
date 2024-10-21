@@ -3,7 +3,7 @@ import { createProduct } from "./createProduct.controller";
 import { getSingleProduct, getAllProducts } from "./getProducts.controller";
 import { updateProductPhoto, updateProductsDetails } from "./updateProduct.controller";
 import { deleteProduct } from "./deletecontroller";
-import { createRatings, getAllReviewsOfProduct, updateReview } from "./review.controller";
+import { createRatings, getAllReviewsOfProduct, updateReview, deleteProduct_Reviews } from "./review.controller";
 
 
 export {
@@ -17,5 +17,6 @@ export {
     deleteProduct,
     createRatings,
     getAllReviewsOfProduct,
-    updateReview
+    updateReview,
+    deleteProduct_Reviews
 }
