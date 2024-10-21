@@ -188,6 +188,36 @@ export const updateReview = asyncHandler(async (req, res) => {
 });
 
 // delete review
-export const deleteProduct_Reviews = asyncHandler(async(req, res)=>{
-  
-})
+// delete review
+export const deleteProduct_Reviews = asyncHandler(async (req, res) => {
+  // get product and review id
+  const { pid, reviewId } = req.params;
+
+  if (!pid || !reviewId) {
+    throw new ApiError(400, "Product and Review Id required");
+  }
+
+  // getting user id and role
+  const userId = (req as any).user?._id;
+  const userRole = (req as any).user?.role;
+
+  // find review
+  const review = await Review.findOne({ _id: reviewId, productId: pid });
+
+  if (!review) {
+    throw new ApiError(404, "Product review not found");
+  }
+ 
+
+  // validate that either the user posted the review or the user is an admin
+  if (review.ratingBy.toString() !== userId.toString() && userRole !== "admin") {
+    throw new ApiError(403, "You are not authorized to delete this review");
+  }
+
+  // delete review
+  await Review.findByIdAndDelete(reviewId);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Review deleted successfully"));
+});
