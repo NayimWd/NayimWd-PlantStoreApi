@@ -7,6 +7,7 @@ const CartSchema: Schema<ICart> = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: [true, "User is required"],
+      index: true
     },
     cartItems: {
       type: [mongoose.Schema.Types.ObjectId],
