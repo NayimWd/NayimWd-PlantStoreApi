@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { veryfyJWT } from "../middlewares/auth.middleware";
-import { addToCart, getUserCart, updateCart } from "../controllers/cart";
+import { addToCart, deleteCartItem, getUserCart, updateCart } from "../controllers/cart";
 
 const router = Router();
 
@@ -23,9 +23,11 @@ const cartRoutes: ICartRoutes = {
 // add to cart
 router.route(cartRoutes.addTo_cart).post(veryfyJWT, addToCart);
 // get cart item
-router.route(cartRoutes.get_cartItem).get(veryfyJWT, getUserCart)
+router.route(cartRoutes.get_cartItem).get(veryfyJWT, getUserCart);
 // update cart 
-router.route(cartRoutes.update_cart).put(veryfyJWT, updateCart)
+router.route(cartRoutes.update_cart).put(veryfyJWT, updateCart);
+// remove cart item
+router.route(cartRoutes.remove_cart).delete(veryfyJWT, deleteCartItem);
 
 
 export default router;
