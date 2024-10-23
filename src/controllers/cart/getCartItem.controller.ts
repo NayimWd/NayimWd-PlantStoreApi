@@ -18,7 +18,7 @@ export const getUserCart = asyncHandler(async (req, res) => {
     path: "cartItems",
     populate: {
       path: "productId",
-      select: "title price stock",
+      select: "title price stock photo",
     },
   });
 
