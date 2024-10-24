@@ -8,10 +8,19 @@ const invoiceSchema: Schema<IInvoice> = new Schema(
       ref: "User",
       required: true,
     },
-    OrderId: {
+    orderId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Order",
       required: true,
+    },
+    invoiceNumber: {
+      type: String,
+      unique: true,
+      required: true,
+      default: function () {
+        // Generate unique invoice number based on timestamp or other strategy
+        return `INV-${Date.now()}`;
+      },
     },
     invoiceDate: {
       type: Date,
@@ -19,15 +28,34 @@ const invoiceSchema: Schema<IInvoice> = new Schema(
     },
     amount: {
       type: Number,
-      required: [true, "amount is required for invoice"],
+      required: [true, "Amount is required for invoice"],
+    },
+    tax: {
+      type: Number,
+      default: 0,
+    },
+    discount: {
+      type: Number,
+      default: 0,
+    },
+    totalAmount: {
+      type: Number,
+      required: true,
+      default: function () {
+        return this.amount + this.tax - this.discount;
+      },
     },
     dueDate: {
       type: Date,
       default: function () {
-        // Set due date 3 days after the invoice date
         const invoiceDate = this.invoiceDate || Date.now();
-        return new Date(invoiceDate.getTime() + 3 * 24 * 60 * 60 * 1000);
+        return new Date(invoiceDate.getTime() + 3 * 24 * 60 * 60 * 1000); // 3 days from invoice date
       },
+    },
+    status: {
+      type: String,
+      enum: ["PAID", "PENDING", "OVERDUE"],
+      default: "PENDING",
     },
   },
   { timestamps: true }
