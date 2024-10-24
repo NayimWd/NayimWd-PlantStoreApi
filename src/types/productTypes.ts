@@ -63,13 +63,16 @@ export interface IOrderItem extends Document {
 }
 
 export interface IOrder extends Document {
-  orderdBy: mongoose.Types.ObjectId;
+  orderedBy: mongoose.Types.ObjectId;
   orderItems: [IOrderItem];
   subTotal: number;
   shippingCharge: number;
   total: number;
-  shippingInfo: mongoose.Types.ObjectId;
-  OrderStatus: "PENDING" | "PROCESSING" | "DELIVERED" | "CANCELLED";
+  payment: mongoose.Types.ObjectId;
+  shippingAddress: string;
+  orderStatus: "PENDING" | "PROCESSING" | "DELIVERED" | "CANCELLED";
+  statusHistory: "PENDING" | "PROCESSING" | "DELIVERED" | "CANCELLED";
+  updatedAt: Date
 }
 
 export interface IPayment extends Document {
@@ -80,8 +83,14 @@ export interface IPayment extends Document {
 
 export interface IInvoice extends Document {
   user: mongoose.Types.ObjectId;
-  OrderId: mongoose.Types.ObjectId;
+  orderId: mongoose.Types.ObjectId;
+  invoiceNumber: string;
   invoiceDate: Date;
   amount: number;
+  tax: number;
+  discount: number;
+  totalAmount: number;
   dueDate: Date;
+  status: "PAID" | "PENDING" | "OVERDUE";
+  
 }

@@ -2,30 +2,34 @@ import mongoose, { Schema } from "mongoose";
 import { IOrder, IOrderItem } from "../../types/productTypes";
 
 // order item
-const orderItemSchema: Schema<IOrderItem> = new Schema({
-  productId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Product",
-    required: [true, "Product Id is required"],
+// Order Item Schema
+const orderItemSchema: Schema<IOrderItem> = new Schema(
+  {
+    productId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+      required: [true, "Product Id is required"],
+    },
+    price: {
+      type: Number,
+      required: [true, "Price is required"],
+    },
+    qty: {
+      type: Number,
+      default: 0,
+    },
+    totalPrice: {
+      type: Number,
+      required: [true, "Total Price is required"],
+    },
   },
-  price: {
-    type: Number,
-    required: [true, "Price is required"],
-  },
-  qty: {
-    type: Number,
-    default: 0,
-  },
-  totalPrice: {
-    type: Number,
-    required: [true, "Total Price is required"],
-  },
-});
+  { timestamps: true }
+);
 
-// order
+// Order Schema
 const OrderSchema: Schema<IOrder> = new Schema(
   {
-    orderdBy: {
+    orderedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: [true, "User is required"],
@@ -33,7 +37,7 @@ const OrderSchema: Schema<IOrder> = new Schema(
     orderItems: [orderItemSchema],
     subTotal: {
       type: Number,
-      required: [true, "subtotal is required"],
+      required: [true, "Subtotal is required"],
     },
     shippingCharge: {
       type: Number,
@@ -43,16 +47,31 @@ const OrderSchema: Schema<IOrder> = new Schema(
       type: Number,
       required: [true, "Total Price is required"],
     },
-    shippingInfo: {
+    payment: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "ShippingInfo",
-      required: [true, "shipping info required"],
+      ref: "Payment",
     },
-    OrderStatus: {
+    shippingAddress: {
+      type: String,
+      required: [true, "Shipping address is required"],
+    },
+    orderStatus: {
       type: String,
       enum: ["PENDING", "PROCESSING", "DELIVERED", "CANCELLED"],
       default: "PENDING",
     },
+    statusHistory: [
+      {
+        status: {
+          type: String,
+          enum: ["PENDING", "PROCESSING", "DELIVERED", "CANCELLED"],
+        },
+        updatedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

@@ -1,11 +1,11 @@
 import mongoose, { Schema } from "mongoose";
-import { IPayment } from "../../types/productTypes";
 
-const paymentSchema: Schema<IPayment> = new Schema(
+
+const paymentSchema: Schema = new Schema(
   {
     price: {
       type: Number,
-      required: [true, "Payment is required"],
+      required: [true, "Payment amount is required"],
     },
     orderId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -17,8 +17,18 @@ const paymentSchema: Schema<IPayment> = new Schema(
       ref: "User",
       required: true,
     },
+    paymentMethod: {
+      type: String,
+      enum: ["Credit Card", "PayPal", "Cash on Delivery", "Stripe"],
+      required: true,
+    },
+    paymentStatus: {
+      type: String,
+      enum: ["Pending", "Completed", "Failed", "Refunded"],
+      default: "Pending",
+    },
   },
   { timestamps: true }
 );
 
-export const Payment = mongoose.model<IPayment>("Payment", paymentSchema);
+export const Payment = mongoose.model("Payment", paymentSchema);
