@@ -48,8 +48,9 @@ const OrderSchema: Schema<IOrder> = new Schema(
       required: [true, "Total Price is required"],
     },
     payment: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.Mixed,
       ref: "Payment",
+      default: null
     },
     shippingAddress: {
       type: String,
@@ -65,6 +66,7 @@ const OrderSchema: Schema<IOrder> = new Schema(
         status: {
           type: String,
           enum: ["PENDING", "PROCESSING", "DELIVERED", "CANCELLED"],
+          default: "PENDING"
         },
         updatedAt: {
           type: Date,

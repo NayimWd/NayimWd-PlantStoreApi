@@ -30,7 +30,12 @@ export interface IProductCategory extends Document {
 
 export interface IWishlist extends Document {
   listedBy: mongoose.Types.ObjectId;
+  wishlistItems: [IWishlist];
+}
+
+export interface IWishlistItem extends Document{
   productId: mongoose.Types.ObjectId;
+  addedAt: Date;
 }
 
 export interface ICart_Item extends Document {
@@ -68,7 +73,7 @@ export interface IOrder extends Document {
   subTotal: number;
   shippingCharge: number;
   total: number;
-  payment: mongoose.Types.ObjectId;
+  payment?: mongoose.Types.ObjectId;
   shippingAddress: string;
   orderStatus: "PENDING" | "PROCESSING" | "DELIVERED" | "CANCELLED";
   statusHistory: "PENDING" | "PROCESSING" | "DELIVERED" | "CANCELLED";

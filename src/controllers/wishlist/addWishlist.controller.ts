@@ -1,4 +1,4 @@
-import { Wishlist } from "../../models/wishlistModel/wishlist.model";
+import { Wishlist } from "../../models/wishlistModel/wishlistItem.model";
 import { ApiError } from "../../utils/ApiError";
 import { ApiResponse } from "../../utils/ApiResponse";
 import { asyncHandler } from "../../utils/asyncHandler";
