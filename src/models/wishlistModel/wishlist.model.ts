@@ -5,7 +5,7 @@ const wishlistItemSchema: Schema<IWishlistItem> = new Schema({
   productId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Product",
-    required: [true, "Product required for wishlist item"],
+    required: [true, "Product Id required for wishlist item"],
   },
   addedAt: {
     type: Date,
@@ -13,7 +13,7 @@ const wishlistItemSchema: Schema<IWishlistItem> = new Schema({
   },
 });
 
-const wishlistSchema: Schema<IWishlist> = new Schema({
+const wishlistSchema = new Schema({
   listedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -22,4 +22,4 @@ const wishlistSchema: Schema<IWishlist> = new Schema({
   wishlistItems: [wishlistItemSchema],
 });
 
-export const Wishlist = mongoose.model<IWishlist>("Wishlist", wishlistSchema);
+export const Wishlist = mongoose.model("Wishlist", wishlistSchema);

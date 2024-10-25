@@ -30,12 +30,12 @@ export interface IProductCategory extends Document {
 
 export interface IWishlist extends Document {
   listedBy: mongoose.Types.ObjectId;
-  wishlistItems: [IWishlist];
+  wishlistItems: [IWishlistItem];
 }
 
 export interface IWishlistItem extends Document{
   productId: mongoose.Types.ObjectId;
-  addedAt: Date;
+  addedAt?: Date;
 }
 
 export interface ICart_Item extends Document {

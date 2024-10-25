@@ -6,13 +6,13 @@ import { addToWishlist, getWisht_Item, removeWishlist_Item } from "../controller
 interface IWishListRoutes {
     add_To_Wishlist: "/add_to_wishlist",
     get_from_wishlist: "/get_from_wishlist",
-    delete_from_wishlist: "/delete_from_wishlist/:wishlistItemId"
+    delete_from_wishlist: "/delete_from_wishlist"
 };
 
 const wishlis_routes: IWishListRoutes = {
     add_To_Wishlist: "/add_to_wishlist",
     get_from_wishlist: "/get_from_wishlist",
-    delete_from_wishlist: "/delete_from_wishlist/:wishlistItemId"
+    delete_from_wishlist: "/delete_from_wishlist"
 }
 
 const router = Router();

@@ -1,4 +1,4 @@
-import { Wishlist } from "../../models/wishlistModel/wishlistItem.model";
+import { Wishlist } from "../../models/wishlistModel/wishlist.model";
 import { ApiError } from "../../utils/ApiError";
 import { ApiResponse } from "../../utils/ApiResponse";
 import { asyncHandler } from "../../utils/asyncHandler";
@@ -12,8 +12,8 @@ export const getWisht_Item = asyncHandler(async (req, res) => {
 
   // get wishlist
   const wishlist = await Wishlist.find({ listedBy: userId }).populate({
-    path: "productId",
-    select: "title price photo"
+    path: "wishlistItems.productId",
+    select: "title price stock photo"
   })
 
   if (!wishlist || wishlist.length === 0) {
