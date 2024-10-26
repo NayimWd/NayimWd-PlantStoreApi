@@ -1,5 +1,6 @@
-import { createOrderFromCart } from "./createOrder.controller";
+import { createOrderFromCart, createOrderfromWishlist } from "./createOrder.controller";
 
 export {
-    createOrderFromCart
+    createOrderFromCart,
+    createOrderfromWishlist
 }

@@ -30,7 +30,7 @@ export interface IProductCategory extends Document {
 
 export interface IWishlist extends Document {
   listedBy: mongoose.Types.ObjectId;
-  wishlistItems: [IWishlistItem];
+  wishlistItems: [];
 }
 
 export interface IWishlistItem extends Document{

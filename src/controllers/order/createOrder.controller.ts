@@ -5,6 +5,7 @@ import { Product } from "../../models/productModel/product.model";
 import { ApiError } from "../../utils/ApiError";
 import { ApiResponse } from "../../utils/ApiResponse";
 import { asyncHandler } from "../../utils/asyncHandler";
+import { Wishlist } from "../../models/wishlistModel/wishlist.model";
 
 export const createOrderFromCart = asyncHandler(async (req, res) => {
   const userId = (req as any).user._id;
@@ -84,3 +85,99 @@ export const createOrderFromCart = asyncHandler(async (req, res) => {
     .status(201)
     .json(new ApiResponse(201, order, "Order placed successfully"));
 });
+
+
+export const createOrderfromWishlist = asyncHandler(async(req, res)=>{
+  const userId = (req as any).user;
+  if(!userId){
+    throw new ApiError(400, "Invalid token, User not found");
+  };
+
+  // get details from req body
+  const {shippingAddress, paymentMethod} = req.body;
+
+  if(!shippingAddress || !paymentMethod){
+    throw new ApiError(400, "shipping address and payment required")
+  }
+
+  // fetch users wishlist and populate product details
+  const wishlist = await Wishlist.findOne({listedBy: userId}).populate({
+    path: "wishlistItems.productId",
+    model: "Product"
+  });
+
+  if(!wishlist || wishlist.wishlistItems.length < 1){
+    throw new ApiError(404, "wishlist is empty")
+  }
+
+  // initialize variable for order item and subtotal
+  const orderItems = [];
+  let subTotal = 0;
+
+  // place order
+  for(const item of wishlist.wishlistItems){
+    const product = (item as any).productId;
+
+    if(!product){
+      throw new ApiError(404, `product not found for this ID: ${(req as any).productId._id}`)
+    }
+
+    // check product stock
+    if(product.stock < 1){
+      throw new ApiError(400, "Insufficient product stock")
+    }
+
+    // push data to orderItems variable
+    orderItems.push({
+      productId: product._id,
+      price: product.price,
+      qty: 1,
+      totalPrice: product.price
+    })
+
+    // subtotal
+    subTotal += product.price;
+
+  }
+
+  // add shipping charge
+  const shippingCharge = 50;
+  const total = subTotal + shippingCharge;
+
+  // create new order
+  const order = await Order.create({
+    orderedBy: userId,
+    orderItems: orderItems,
+    subTotal,
+    shippingCharge,
+    total,
+    shippingAddress,
+    orderStatus: "PENDING",
+    payment: paymentMethod === "COD" ? "pending" : null
+  });
+
+  if(!order){
+    throw new ApiError(400, "Place order from wishlist failed")
+  }
+
+  // update product stock
+  for (const item of wishlist.wishlistItems) {
+    await Product.findByIdAndUpdate((item as any).productId, {
+      $inc: { stock: -1 },
+    });
+  }
+
+  // clear wishlist
+  await Wishlist.findOneAndDelete({listedBy: userId});
+
+  return res  
+           .status(200)
+           .json(
+            new ApiResponse(
+              200,
+              order,
+              "Order placed successfully"
+            )
+           )
+
+})
