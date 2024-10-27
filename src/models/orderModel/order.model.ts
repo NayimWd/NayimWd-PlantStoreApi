@@ -58,7 +58,7 @@ const OrderSchema: Schema<IOrder> = new Schema(
     },
     orderStatus: {
       type: String,
-      enum: ["PENDING", "PROCESSING", "DELIVERED", "CANCELLED"],
+      enum: ["PENDING", "PROCESSING", "PAID", "CANCELLED"],
       default: "PENDING",
     },
     statusHistory: [
