@@ -1,4 +1,3 @@
-import { model } from "mongoose";
 import { Cart } from "../../models/cartModel/cart.model";
 import { Order } from "../../models/orderModel/order.model";
 import { Product } from "../../models/productModel/product.model";
@@ -6,6 +5,7 @@ import { ApiError } from "../../utils/ApiError";
 import { ApiResponse } from "../../utils/ApiResponse";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { Wishlist } from "../../models/wishlistModel/wishlist.model";
+import { stripe } from "../../config/stripeConfig";
 
 export const createOrderFromCart = asyncHandler(async (req, res) => {
   const userId = (req as any).user._id;
@@ -13,8 +13,8 @@ export const createOrderFromCart = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid token, user not found");
   }
 
-  const { shippingAddress, paymentMethod } = req.body;
-  if (!shippingAddress || !paymentMethod) {
+  const {city, zipCode, shippingAddress, paymentMethod } = req.body;
+  if (!city || !zipCode || !shippingAddress || !paymentMethod) {
     throw new ApiError(400, "Shipping Address and Payment method required");
   }
 
@@ -62,16 +62,38 @@ export const createOrderFromCart = asyncHandler(async (req, res) => {
   const shippingCharge = 50;
   const total = subTotal + shippingCharge;
 
+  // create new order for cash on delivery order
   const order = await Order.create({
     orderedBy: userId,
     orderItems: orderItems,
     subTotal: subTotal,
     shippingCharge: shippingCharge,
     total: total,
+    city: city,
+    zipCode: zipCode,
     shippingAddress: shippingAddress,
     orderStatus: "PENDING",
     payment: paymentMethod === "COD" ? "pending" : null,
   });
+
+  // create new order for card payment order
+  if (paymentMethod !== "COD") {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: total * 100,
+      currency: "usd",
+      metadata: {
+        orderId: order._id.toString(),
+      },
+    });
+
+    return res  
+            .status(200)
+            .json({
+              order,
+              clientSecret : paymentIntent.client_secret,
+              message: "Order created successfully with payment"
+            })
+  }
 
   for (const item of cart.cartItems) {
     await Product.findByIdAndUpdate((item as any).productId, {
@@ -86,28 +108,27 @@ export const createOrderFromCart = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, order, "Order placed successfully"));
 });
 
-
-export const createOrderfromWishlist = asyncHandler(async(req, res)=>{
+export const createOrderfromWishlist = asyncHandler(async (req, res) => {
   const userId = (req as any).user;
-  if(!userId){
+  if (!userId) {
     throw new ApiError(400, "Invalid token, User not found");
-  };
+  }
 
   // get details from req body
-  const {shippingAddress, paymentMethod} = req.body;
-
-  if(!shippingAddress || !paymentMethod){
-    throw new ApiError(400, "shipping address and payment required")
+  const {city, zipCode, shippingAddress, paymentMethod } = req.body;
+ 
+  if (!city || !zipCode || !shippingAddress || !paymentMethod) {
+    throw new ApiError(400, "Shipping Address and Payment method required");
   }
 
   // fetch users wishlist and populate product details
-  const wishlist = await Wishlist.findOne({listedBy: userId}).populate({
+  const wishlist = await Wishlist.findOne({ listedBy: userId }).populate({
     path: "wishlistItems.productId",
-    model: "Product"
+    model: "Product",
   });
 
-  if(!wishlist || wishlist.wishlistItems.length < 1){
-    throw new ApiError(404, "wishlist is empty")
+  if (!wishlist || wishlist.wishlistItems.length < 1) {
+    throw new ApiError(404, "wishlist is empty");
   }
 
   // initialize variable for order item and subtotal
@@ -115,16 +136,19 @@ export const createOrderfromWishlist = asyncHandler(async(req, res)=>{
   let subTotal = 0;
 
   // place order
-  for(const item of wishlist.wishlistItems){
+  for (const item of wishlist.wishlistItems) {
     const product = (item as any).productId;
 
-    if(!product){
-      throw new ApiError(404, `product not found for this ID: ${(req as any).productId._id}`)
+    if (!product) {
+      throw new ApiError(
+        404,
+        `product not found for this ID: ${(req as any).productId._id}`
+      );
     }
 
     // check product stock
-    if(product.stock < 1){
-      throw new ApiError(400, "Insufficient product stock")
+    if (product.stock < 1) {
+      throw new ApiError(400, "Insufficient product stock");
     }
 
     // push data to orderItems variable
@@ -132,32 +156,52 @@ export const createOrderfromWishlist = asyncHandler(async(req, res)=>{
       productId: product._id,
       price: product.price,
       qty: 1,
-      totalPrice: product.price
-    })
+      totalPrice: product.price,
+    });
 
     // subtotal
     subTotal += product.price;
-
   }
 
   // add shipping charge
   const shippingCharge = 50;
   const total = subTotal + shippingCharge;
 
-  // create new order
+  // create new order for cash on delivery
   const order = await Order.create({
     orderedBy: userId,
     orderItems: orderItems,
     subTotal,
     shippingCharge,
     total,
+    city,
+    zipCode,
     shippingAddress,
     orderStatus: "PENDING",
-    payment: paymentMethod === "COD" ? "pending" : null
+    payment: paymentMethod === "COD" ? "pending" : null,
   });
 
-  if(!order){
-    throw new ApiError(400, "Place order from wishlist failed")
+  //create new order for card payment order
+  if (paymentMethod !== "COD") {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: total * 100,
+      currency: "usd",
+      metadata: {
+        orderId: order._id.toString(),
+      },
+    });
+
+    return res
+             .status(200)
+             .json({
+              order,
+              clientSecret: paymentIntent.client_secret,
+              message: "Order created successfully with payment"
+             })
+  }
+
+  if (!order) {
+    throw new ApiError(400, "Place order from wishlist failed");
   }
 
   // update product stock
@@ -168,16 +212,9 @@ export const createOrderfromWishlist = asyncHandler(async(req, res)=>{
   }
 
   // clear wishlist
-  await Wishlist.findOneAndDelete({listedBy: userId});
+  await Wishlist.findOneAndDelete({ listedBy: userId });
 
-  return res  
-           .status(200)
-           .json(
-            new ApiResponse(
-              200,
-              order,
-              "Order placed successfully"
-            )
-           )
-
-})
+  return res
+    .status(200)
+    .json(new ApiResponse(200, order, "Order placed successfully"));
+});

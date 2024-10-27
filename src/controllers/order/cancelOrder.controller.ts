@@ -28,7 +28,7 @@ export const cancelOrder = asyncHandler(async (req, res) => {
   }
 
   // check if order already canceled or completed
-  if (order.orderStatus === "CANCELLED" || order.orderStatus === "DELIVERED") {
+  if (order.orderStatus === "CANCELLED" || order.orderStatus === "PAID") {
     throw new ApiError(400, "Can not cancel or delete this order (C/D)");
   }
 

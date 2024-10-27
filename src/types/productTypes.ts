@@ -74,6 +74,8 @@ export interface IOrder extends Document {
   shippingCharge: number;
   total: number;
   payment?: mongoose.Types.ObjectId;
+  city: string,
+  zipCode: string
   shippingAddress: string;
   orderStatus: "PENDING" | "PROCESSING" | "PAID" | "CANCELLED";
   statusHistory: "PENDING" | "PROCESSING" | "DELIVERED" | "CANCELLED";

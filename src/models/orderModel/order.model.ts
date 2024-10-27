@@ -52,6 +52,14 @@ const OrderSchema: Schema<IOrder> = new Schema(
       ref: "Payment",
       default: null
     },
+    city: {
+      type: String,
+      required: true
+    },
+    zipCode: {
+      type: String,
+      required: true
+    },
     shippingAddress: {
       type: String,
       required: [true, "Shipping address is required"],

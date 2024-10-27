@@ -3,7 +3,8 @@ import userRoutes from "./user.routes";
 import productRoutes from "./product.routes";
 import cartRoutes from "./cart.routes";
 import wishListRoutes from "./wishlist.routes";
-import OrderRoutes from "./order.routes"
+import OrderRoutes from "./order.routes";
+import paymentRoutes from "./payment.routes";
 
 // Create a central router to handle all routes
 const router = express.Router();
@@ -15,6 +16,7 @@ interface IRoutePath {
   cart_routes: "/api/v1/cart";
   wishList_routes: "/api/v1/wishList";
   order_routes: "/api/v1/order";
+  payment_routes: "/api/v1"
 }
 // creating semi root path
 const route_path: IRoutePath = {
@@ -23,7 +25,8 @@ const route_path: IRoutePath = {
   product_routes: "/api/v1/p",
   cart_routes: "/api/v1/cart",
   wishList_routes: "/api/v1/wishList",
-  order_routes: "/api/v1/order"
+  order_routes: "/api/v1/order",
+  payment_routes: "/api/v1"
 };
 
 // Health check route
@@ -43,5 +46,7 @@ router.use(route_path.cart_routes, cartRoutes)
 router.use(route_path.wishList_routes, wishListRoutes)
 // order routes
 router.use(route_path.order_routes, OrderRoutes)
+// payment routes
+router.use(route_path.payment_routes, paymentRoutes)
 
 export default router;

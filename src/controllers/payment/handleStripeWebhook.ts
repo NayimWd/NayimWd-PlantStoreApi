@@ -2,6 +2,9 @@ import { stripe } from "../../config/stripeConfig";
 import { Order } from "../../models/orderModel/order.model";
 import { asyncHandler } from "../../utils/asyncHandler";
 
+// Webhook secret 
+const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
 export const handleStripeWebhook = asyncHandler(async (req, res) => {
   const sig = req.headers["stripe-signature"];
 
@@ -12,7 +15,7 @@ export const handleStripeWebhook = asyncHandler(async (req, res) => {
     event = stripe.webhooks.constructEvent(
       req.body,
       sig as string,
-      process.env.STRIPE_WEBHOOK_SECRET as string
+      endpointSecret as string
     );
   } catch (err: any) {
     console.error("webhook signature verification failed");
