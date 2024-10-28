@@ -8,6 +8,10 @@ const invoiceSchema: Schema<IInvoice> = new Schema(
       ref: "User",
       required: true,
     },
+    customerName: {
+      type: String,
+      required: [true, "Customer name is required"],
+    },
     orderId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Order",
@@ -18,7 +22,7 @@ const invoiceSchema: Schema<IInvoice> = new Schema(
       unique: true,
       required: true,
       default: function () {
-        // Generate unique invoice number based on timestamp or other strategy
+        // Generate unique invoice number
         return `INV-${Date.now()}`;
       },
     },
@@ -61,4 +65,4 @@ const invoiceSchema: Schema<IInvoice> = new Schema(
   { timestamps: true }
 );
 
-export const Delivery = mongoose.model<IInvoice>("Delivery", invoiceSchema);
+export const Invoice = mongoose.model<IInvoice>("Invoice", invoiceSchema);

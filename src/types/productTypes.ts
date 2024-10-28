@@ -77,7 +77,7 @@ export interface IOrder extends Document {
   city: string,
   zipCode: string
   shippingAddress: string;
-  orderStatus: "PENDING" | "PROCESSING" | "PAID" | "CANCELLED";
+  orderStatus: "PENDING" | "PROCESSING" | "PAID" | "COMPLETED" | "CANCELLED";
   statusHistory: "PENDING" | "PROCESSING" | "DELIVERED" | "CANCELLED";
   updatedAt: Date
 }
@@ -90,6 +90,7 @@ export interface IPayment extends Document {
 
 export interface IInvoice extends Document {
   user: mongoose.Types.ObjectId;
+  customerName: string;
   orderId: mongoose.Types.ObjectId;
   invoiceNumber: string;
   invoiceDate: Date;

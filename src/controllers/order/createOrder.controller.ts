@@ -6,6 +6,7 @@ import { ApiResponse } from "../../utils/ApiResponse";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { Wishlist } from "../../models/wishlistModel/wishlist.model";
 import { stripe } from "../../config/stripeConfig";
+import { Invoice } from "../../models/paymentModel/invoice.model";
 
 export const createOrderFromCart = asyncHandler(async (req, res) => {
   const userId = (req as any).user._id;
@@ -191,6 +192,9 @@ export const createOrderfromWishlist = asyncHandler(async (req, res) => {
       },
     });
 
+    // generate invoice
+    await generateInvoice(order, userId)
+
     return res
              .status(200)
              .json({
@@ -214,7 +218,31 @@ export const createOrderfromWishlist = asyncHandler(async (req, res) => {
   // clear wishlist
   await Wishlist.findOneAndDelete({ listedBy: userId });
 
-  return res
+  // generate invoice after order placed
+  await generateInvoice(order, userId);
+
+  return res  
     .status(200)
     .json(new ApiResponse(200, order, "Order placed successfully"));
 });
+
+// generate invoice function
+const generateInvoice = async(order: any, userId: any)=>{
+  const invoiceData = {
+    user: userId,
+    customerName: order.orderedBy.name,
+    orderId: order._id,
+    amount: order.subTotal,
+    tax: calculateTax(order.subTotal),
+    discount: 0,
+    totalAmount: order.subTotal + calculateTax(order.subTotal)
+  };
+
+  await Invoice.create(invoiceData);
+}
+
+// HOF- calculate tax
+const calculateTax = (amount: number)=>{
+  const taxRate = 0.05
+  return amount * taxRate
+}
