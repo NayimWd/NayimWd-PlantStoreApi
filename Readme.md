@@ -52,7 +52,7 @@ Create a .env file and add the required environment variables as described in th
 
 Run the application:
 npm run dev
-Access the app at http://localhost:8000.
+Access the app at https://furn-flora-api.vercel.app/api/v1/health
 
 🌱 Environment Variables
 Create a .env file in the root directory of your project and add the following environment variables:
@@ -67,6 +67,8 @@ CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 
 📋 API Endpoints
+Health 
+/health
 Auth Routes
 POST /auth/register - Register a new user
 POST /auth/login - Login an existing user

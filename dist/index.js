@@ -4,11 +4,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const app = (0, express_1.default)();
+const dotenv_1 = __importDefault(require("dotenv"));
+const db_1 = __importDefault(require("./db"));
+const app_1 = require("./app/app");
+// dotenv configure
+dotenv_1.default.config();
 const PORT = process.env.PORT || 8000;
 // Middleware
-app.use(express_1.default.json());
-app.get("/", (req, res) => {
-    res.send("ok");
-});
-app.listen(PORT);
+app_1.app.use(express_1.default.json());
+// Database connection
+const startServer = async () => {
+    try {
+        // Database connection
+        await (0, db_1.default)();
+        app_1.app.listen(PORT, () => {
+            console.log("Server running on port:", PORT);
+        });
+    }
+    catch (err) {
+        console.log("MongoDB connection failed!!", err);
+    }
+};
+startServer();
