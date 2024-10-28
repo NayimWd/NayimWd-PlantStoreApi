@@ -7,6 +7,7 @@ import { asyncHandler } from "../../utils/asyncHandler";
 import { Wishlist } from "../../models/wishlistModel/wishlist.model";
 import { stripe } from "../../config/stripeConfig";
 import { Invoice } from "../../models/paymentModel/invoice.model";
+import { User } from "../../models/userModel/user.model";
 
 export const createOrderFromCart = asyncHandler(async (req, res) => {
   const userId = (req as any).user._id;
@@ -86,14 +87,18 @@ export const createOrderFromCart = asyncHandler(async (req, res) => {
         orderId: order._id.toString(),
       },
     });
-
+  
+    // generate invoice after order complete
+    await generateInvoice(order, userId)
+    
     return res  
-            .status(200)
-            .json({
-              order,
-              clientSecret : paymentIntent.client_secret,
-              message: "Order created successfully with payment"
-            })
+    .status(200)
+    .json({
+      order,
+      clientSecret : paymentIntent.client_secret,
+      message: "Order created successfully with payment"
+    })
+    
   }
 
   for (const item of cart.cartItems) {
@@ -101,8 +106,11 @@ export const createOrderFromCart = asyncHandler(async (req, res) => {
       $inc: { stock: -(item as any).quantity },
     });
   }
-
+  // clear cart after order
   await Cart.findOneAndDelete({ addedBy: userId });
+
+  // create invoice after order placed
+  await generateInvoice(order, userId)
 
   return res
     .status(201)
@@ -228,9 +236,16 @@ export const createOrderfromWishlist = asyncHandler(async (req, res) => {
 
 // generate invoice function
 const generateInvoice = async(order: any, userId: any)=>{
+
+  // Fetch user information for invoice if required
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new ApiError(404, "User not found for invoice generation");
+  }
+
   const invoiceData = {
     user: userId,
-    customerName: order.orderedBy.name,
+    customerName: user.name,
     orderId: order._id,
     amount: order.subTotal,
     tax: calculateTax(order.subTotal),
