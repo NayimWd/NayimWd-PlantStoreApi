@@ -5,15 +5,15 @@ import { downloadInvoicePDF, getAllInvoice, getSingleInvoice } from "../controll
 const router = Router();
 
 interface IInvoiceRoutes {
-    get_single_invoice : "/get_single_invoice",
+    get_single_invoice : "/get_single_invoice/:invoiceId",
     get_all_invoice: "/get_all_invoice",
-    download_invoice: "/download_invoice"
+    download_invoice: "/download_invoice/:invoiceId"
 }
 
 const InvoiceRoutes: IInvoiceRoutes = {
-    get_single_invoice: "/get_single_invoice",
+    get_single_invoice: "/get_single_invoice/:invoiceId",
     get_all_invoice: "/get_all_invoice",
-    download_invoice: "/download_invoice"
+    download_invoice: "/download_invoice/:invoiceId"
 }
 
 // get single invoice
