@@ -17,6 +17,7 @@ import { zodRegisterSchema, zodLoginSchema } from "../validator";
 import { upload } from "../middlewares/multer.middleware";
 import { isAdmin, veryfyJWT } from "../middlewares/auth.middleware";
 
+
 const router: Router = Router();
 
 interface IUserRoute {

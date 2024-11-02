@@ -16,8 +16,8 @@ const payment_routes: IPayment = {
 }
 
 // create payment
-router.route(payment_routes.create_payment).post(veryfyJWT, createPaymentIntent)
-router.route(payment_routes.stripe_web_hook).post(veryfyJWT, express.raw({ type: 'application/json' }), handleStripeWebhook)
+router.route(payment_routes.create_payment).post(createPaymentIntent)
+router.route(payment_routes.stripe_web_hook).post( express.raw({ type: 'application/json' }), handleStripeWebhook)
 
 
 export default router;

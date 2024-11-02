@@ -48,6 +48,8 @@ export const updateProductsDetails = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Product update failed");
   }
 
+
+
   return res
     .status(200)
     .json(new ApiResponse(200, updateProduct, "Product updated successfully"));

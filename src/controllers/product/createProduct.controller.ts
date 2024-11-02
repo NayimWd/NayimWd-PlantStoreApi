@@ -54,6 +54,7 @@ export const createProduct = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Product creation failed");
   }
 
+
   // returning response
   return res
     .status(201)
