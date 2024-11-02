@@ -17,7 +17,7 @@ interface IRoutePath {
   cart_routes: "/api/v1/cart";
   wishList_routes: "/api/v1/wishList";
   order_routes: "/api/v1/order";
-  payment_routes: "/api/v1";
+  payment_routes: "/api/v1/payment";
   invoice_rouotes: "/api/v1/invoice"
 }
 // creating semi root path
@@ -28,7 +28,7 @@ const route_path: IRoutePath = {
   cart_routes: "/api/v1/cart",
   wishList_routes: "/api/v1/wishList",
   order_routes: "/api/v1/order",
-  payment_routes: "/api/v1",
+  payment_routes: "/api/v1/payment",
   invoice_rouotes: "/api/v1/invoice"
 };
 

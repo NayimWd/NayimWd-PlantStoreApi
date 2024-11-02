@@ -5,6 +5,7 @@ import { asyncHandler } from "../../utils/asyncHandler";
 
 export const createPaymentIntent = asyncHandler(async (req, res) => {
   const { orderId } = req.body;
+ 
   if (!orderId) {
     throw new ApiError(400, "Order id is required");
   }
