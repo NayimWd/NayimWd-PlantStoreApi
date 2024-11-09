@@ -1,8 +1,10 @@
+import redis from "../../config/redisClient";
 import { Category } from "../../models/productModel/category.model";
 import { Product } from "../../models/productModel/product.model";
 import { ApiError } from "../../utils/ApiError";
 import { ApiResponse } from "../../utils/ApiResponse";
 import { asyncHandler } from "../../utils/asyncHandler";
+import { invalidateCache } from "../../utils/cacheUtils";
 import { uploadOnCloudinary } from "../../utils/cloudinary";
 
 export const updateProductsDetails = asyncHandler(async (req, res) => {
@@ -48,7 +50,10 @@ export const updateProductsDetails = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Product update failed");
   }
 
-
+  // Clear the Redis cache for this product after the update
+  await invalidateCache('products', pid)
+  // Clear the Redis cache for all products (get all products query)
+  await invalidateCache("products:*")
 
   return res
     .status(200)
@@ -84,6 +89,12 @@ export const updateProductPhoto = asyncHandler(async (req, res) => {
   if (!updatePhoto) {
     throw new ApiError(400, "Photo update failed!");
   }
+
+    // Clear the Redis cache for this product after the update
+  await invalidateCache('products', pid)
+  // Clear the Redis cache for all products (get all products query)
+  await invalidateCache("products:*")
+    
 
   return res
     .status(200)

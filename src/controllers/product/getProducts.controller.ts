@@ -1,3 +1,4 @@
+import redis from "../../config/redisClient";
 import { Category } from "../../models/productModel/category.model";
 import { Product } from "../../models/productModel/product.model";
 import { ApiError } from "../../utils/ApiError";
@@ -7,11 +8,32 @@ import { asyncHandler } from "../../utils/asyncHandler";
 export const getSingleProduct = asyncHandler(async (req, res) => {
   const productId = req.params.pid;
 
+   // Construct the cache key for the single product
+   const cacheKey = `product:${productId}`;
+
+   // Check if cached data exists
+   try {
+    const cachedData = await redis.get(cacheKey);
+    if (cachedData) {
+      console.log(`Cache hit for key: ${cacheKey}`);
+      return res.json(JSON.parse(cachedData)); // Return cached data if available
+    }
+  } catch (error) {
+    console.error('Error fetching from Redis:', error);
+    // Fallback to MongoDB query in case of Redis error
+  }
+
+
   const searchProduct = await Product.findById(productId);
+
 
   if (!searchProduct) {
     throw new ApiError(404, "Product does not exist");
   }
+
+   // Cache the product data for future requests
+   await redis.setex(cacheKey, 3600, JSON.stringify(searchProduct)); // Cache for 1 hour (3600 seconds)
+
 
   return res
     .status(200)
@@ -35,6 +57,21 @@ export const getAllProducts = asyncHandler(async (req, res) => {
   const pageNumber = Number(page);
   const pageSize = Number(limit);
   const skip = (pageNumber - 1) * pageSize;
+
+  // Construct the cache key based on the query params
+  const cacheKey = `products:${category || 'all'}:${pageNumber}:${pageSize}:${sortOrder}`;
+
+  // Check if cached data exists
+  try {
+    const cachedData = await redis.get(cacheKey);
+    if (cachedData) {
+      console.log(`Cache hit for key: ${cacheKey}`);
+      return res.json(JSON.parse(cachedData)); // Return cached data if available
+    }
+  } catch (error) {
+    console.error('Error fetching from Redis:', error);
+    // Fallback to MongoDB query in case of Redis error
+  }
 
   // filter condition
   const matchConditions: any = {};
@@ -101,6 +138,9 @@ export const getAllProducts = asyncHandler(async (req, res) => {
   if (!products.length) {
     throw new ApiError(404, "Product do not exist for this filter!");
   }
+
+  // Cache the data after the query
+  await redis.set(cacheKey, JSON.stringify(products)); // Cache for 1 hour (3600 seconds)
 
   return res.status(200).json(
     new ApiResponse(

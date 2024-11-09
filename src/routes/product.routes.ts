@@ -18,6 +18,7 @@ import zodValidator from "../middlewares/validator.middleware";
 import { ZodcategorySchema } from "../validator";
 import { ZodProductSchema } from "../validator/product_validator";
 import { upload } from "../middlewares/multer.middleware";
+import { cacheMiddleware } from "../middlewares/cacheMiddleware";
 
 
 
@@ -64,9 +65,9 @@ router
   .route(product_routes.create_product)
   .post(veryfyJWT, isAdmin, upload.single("photo"), createProduct); // todo - zod validator add later
 // get single product by id
-router.route(product_routes.getSingle_product).get( getSingleProduct);
+router.route(product_routes.getSingle_product).get(cacheMiddleware, getSingleProduct);
 // get all products
-router.route(product_routes.getAll_products).get( getAllProducts);
+router.route(product_routes.getAll_products).get(cacheMiddleware, getAllProducts);
 // update product details
 router
   .route(product_routes.update_product_details)

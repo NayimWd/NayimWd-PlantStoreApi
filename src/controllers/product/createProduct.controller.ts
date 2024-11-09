@@ -3,6 +3,7 @@ import { Product } from "../../models/productModel/product.model";
 import { ApiError } from "../../utils/ApiError";
 import { ApiResponse } from "../../utils/ApiResponse";
 import { asyncHandler } from "../../utils/asyncHandler";
+import { invalidateCache } from "../../utils/cacheUtils";
 import { uploadOnCloudinary } from "../../utils/cloudinary";
 
 
@@ -54,6 +55,8 @@ export const createProduct = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Product creation failed");
   }
 
+  // invalidate cache
+  await invalidateCache('products')
 
   // returning response
   return res
