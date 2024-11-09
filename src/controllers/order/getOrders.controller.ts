@@ -27,6 +27,8 @@ export const getAllOrders = asyncHandler(async (req, res) => {
     throw new ApiError(404, "No order found");
   }
 
+
+
   return res
     .status(200)
     .json(new ApiResponse(200, orders, "Order fetched successfully"));

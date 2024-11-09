@@ -28,7 +28,7 @@ export const getAllUsers = asyncHandler(async (req, res) => {
 
   // Adding pagination, searching, and sorting
   const page = parseInt((req as any).query.page as string) || 1;
-  const limit = parseInt((req as any).query.limit as string) || 10;
+  const limit = parseInt((req as any).query.limit as string) || 15;
   const nameSearch = (req as any).query.name
     ? { name: { $regex: (req as any).query.name, $options: "i" } }
     : {};
@@ -63,6 +63,8 @@ export const getAllUsers = asyncHandler(async (req, res) => {
 
   // Execute aggregation
   const allUsers = await User.aggregate(pipeline);
+
+
 
   return res.status(200).json(
     new ApiResponse(

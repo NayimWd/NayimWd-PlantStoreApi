@@ -4,6 +4,8 @@ import { User } from "../../models/userModel/user.model";
 import { ApiError } from "../../utils/ApiError";
 import { ApiResponse } from "../../utils/ApiResponse";
 import { asyncHandler } from "../../utils/asyncHandler";
+import redis from "../../config/redisClient";
+import { invalidateCache } from "../../utils/cacheUtils";
 
 export const createRatings = asyncHandler(async (req, res) => {
   // get current user
@@ -41,6 +43,15 @@ export const createRatings = asyncHandler(async (req, res) => {
     comment,
   });
 
+  if(!newReview){
+    throw new ApiError(400, "something went wrong creating review");
+  };
+
+  // Clear the Redis cache for this product review after the update
+  await invalidateCache('reviews', pid)
+  // Clear the Redis cache for all this products review (get all products query)
+  await invalidateCache("reviews:*")
+
   return res
     .status(201)
     .json(
@@ -56,6 +67,19 @@ export const getAllReviewsOfProduct = asyncHandler(async (req, res) => {
   if (!pid) {
     throw new ApiError(400, "Product id required");
   }
+
+  // Construct the cache key for the single product review
+  const cacheKey = `reviews:${pid}`;
+  try {
+    const cachedData = await redis.get(cacheKey);
+    if (cachedData) {
+      return res.json(JSON.parse(cachedData)); // Return cached data if available
+    }
+  } catch (error) {
+    console.error('Error fetching from Redis:', error);
+    // Fallback to MongoDB query in case of Redis error
+  }
+
 
   // getting reviews useing Aggregation pipeline
   const reviews = await Review.aggregate([
@@ -114,6 +138,9 @@ export const getAllReviewsOfProduct = asyncHandler(async (req, res) => {
   if (!reviews.length) {
     throw new ApiError(404, "No reviews found for this product");
   }
+
+  // chache review data
+  await redis.set(cacheKey, JSON.stringify(reviews)); // Cache for 1 hour (3600 seconds)
 
   return res
     .status(200)
@@ -182,6 +209,11 @@ export const updateReview = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Failed to update review");
   }
 
+  // Clear the Redis cache for this product review after the update
+  await invalidateCache('reviews', pid)
+  // Clear the Redis cache for all this products review (get all products query)
+  await invalidateCache("reviews:*")
+
   return res
     .status(200)
     .json(new ApiResponse(200, updateReview, "Review update successful"));
@@ -215,7 +247,16 @@ export const deleteProduct_Reviews = asyncHandler(async (req, res) => {
   }
 
   // delete review
-  await Review.findByIdAndDelete(reviewId);
+  const deleteReview = await Review.findByIdAndDelete(reviewId);
+
+  if(!deleteReview){
+    throw new ApiError(400, "Error on deleting review")
+  }
+
+  // Clear the Redis cache for this product review after the update
+  await invalidateCache('reviews', pid)
+  // Clear the Redis cache for all this products review (get all products query)
+  await invalidateCache("reviews:*")
 
   return res
     .status(200)

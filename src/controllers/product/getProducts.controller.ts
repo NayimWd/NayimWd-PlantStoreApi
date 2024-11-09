@@ -15,7 +15,6 @@ export const getSingleProduct = asyncHandler(async (req, res) => {
    try {
     const cachedData = await redis.get(cacheKey);
     if (cachedData) {
-      console.log(`Cache hit for key: ${cacheKey}`);
       return res.json(JSON.parse(cachedData)); // Return cached data if available
     }
   } catch (error) {
@@ -65,7 +64,6 @@ export const getAllProducts = asyncHandler(async (req, res) => {
   try {
     const cachedData = await redis.get(cacheKey);
     if (cachedData) {
-      console.log(`Cache hit for key: ${cacheKey}`);
       return res.json(JSON.parse(cachedData)); // Return cached data if available
     }
   } catch (error) {
@@ -120,7 +118,6 @@ export const getAllProducts = asyncHandler(async (req, res) => {
     },
   });
 
-  // Unwind the categoryDetails array to make it a flat structure
   // Unwind the categoryDetails array to make it a flat structure
   productsPipeline.push({
     $unwind: {

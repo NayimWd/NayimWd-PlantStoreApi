@@ -3,6 +3,7 @@ import { Product } from "../../models/productModel/product.model";
 import { ApiError } from "../../utils/ApiError";
 import { ApiResponse } from "../../utils/ApiResponse";
 import { asyncHandler } from "../../utils/asyncHandler";
+import { invalidateCache } from "../../utils/cacheUtils";
 
 export const orderUpdate = asyncHandler(async (req, res) => {
   // get user id and admin
@@ -67,7 +68,12 @@ export const orderUpdate = asyncHandler(async (req, res) => {
 
     // save updated order
     await order.save();
+
+  // Clear the Redis cache for all products (get all products query)
+  await invalidateCache(`products:*`);
   }
+
+
 
   return res
     .status(200)

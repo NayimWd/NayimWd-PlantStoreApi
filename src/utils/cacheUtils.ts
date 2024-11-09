@@ -9,10 +9,7 @@ export const invalidateCache = async (resource: string, id?: string) => {
   
       if (keys.length > 0) {
         await redis.del(...keys);
-        console.log(`Cache invalidated for key(s): ${keys.join(', ')}`);
-      } else {
-        console.log('No cache keys found to invalidate.');
-      }
+      } 
     } catch (error) {
       console.error(`Failed to invalidate cache for key: ${cacheKey}`, error);
     }

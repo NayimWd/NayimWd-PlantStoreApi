@@ -1,109 +1,97 @@
-🌿 Plant Store E-Commerce
-A fully functional eCommerce platform designed for selling plants online. This application is built with Node.js, Express.js, TypeScript, and MongoDB (Mongoose), providing a smooth and scalable backend for managing products, users, and orders. The project uses JWT for secure authentication, Cloudinary for media storage, and Zod for data validation.
+# E-Commerce Backend API
 
-🚀 Live Demo
-Check out the live version of the plant store here.
+A robust and scalable e-commerce backend built with **Node.js**, **Express**, **TypeScript**, **MongoDB**, and **Redis**. This API handles product management, cart and wishlist functionalities, user authentication, order management, payment integration, and invoice generation for an e-commerce platform.
 
-Database diagram available - [here](https://app.eraser.io/workspace/tNrBITdz4vrAp7OkcOqr)
+## Live Link 
+### [CLICK HERE](https://furn-flora-api.vercel.app/api/v1/health)
 
-📖 Table of Contents
-Features
-Tech Stack
-Installation
-Environment Variables
-API Endpoints
-Folder Structure
-Documentation
-License
-✨ Features
-User authentication and authorization using JWT
-Bcrypt for password hashing and security
-Product management (Create, Read, Update, Delete) for admin users
-Cloudinary integration for image uploads
-Secure payment processing integration (e.g., Stripe or PayPal)
-Responsive design for user-friendly browsing
-Shopping cart and checkout functionality
-Order history for users
-RESTful API with robust validation using Zod
-CORS enabled for secure cross-origin requests
-🛠️ Tech Stack
-Node.js: Server-side JavaScript runtime
-Express.js: Web framework for building APIs
-TypeScript: Strictly typed JavaScript for scalable and maintainable code
-MongoDB: NoSQL database used with Mongoose for ORM
-JWT: Secure token-based authentication
-Cloudinary: Media and image storage
-Zod: Schema validation for API requests
-Bcrypt: Password hashing
-Nodemon: Auto-restart server for development
+## Features
 
-📦 Installation
-Clone the repository:
-git clone https://github.com/yourusername/plant-store.git
-Navigate to the project directory:
+- **User Authentication & Authorization**: Secure login, registration, and JWT-based user authentication.
+- **Product Management**: CRUD operations for products, including filtering and pagination.
+- **Cart & Wishlist**: Add products to the cart and wishlist, update quantities, and manage items.
+- **Order Management**: Place, view, update, and cancel orders, including integration with Stripe for payment.
+- **Invoice Generation**: Automatically generates invoices upon order completion, with downloadable PDFs.
+- **Redis Caching**: Optimized data fetching with Redis caching for faster responses.
+- **Payment Integration**: Supports Cash on Delivery (COD) and Stripe card payments.
+- **Swagger API Documentation**: Detailed API documentation for easy integration and testing.
+
+## Tech Stack
+
+- **Backend**: Node.js, Express, TypeScript
+- **Database**: MongoDB (Mongoose)
+- **Caching**: Redis
+- **Payment Integration**: Stripe
+- **PDF Generation**: PDFKit (for invoice PDFs)
+- **Authentication**: JWT (JSON Web Tokens)
+- **Documentation**: Swagger
 
 
-cd plant-store
-Install dependencies:
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- [Node.js](https://nodejs.org/en/) (v14 or above)
+- [MongoDB](https://www.mongodb.com/) (local or cloud-based)
+- [Redis](https://redis.io/) (for caching)
+- [Stripe Account](https://stripe.com/) (for payment integration)
+- [Swagger UI](https://swagger.io/tools/swagger-ui/) (for API documentation)
+
+## Installation
+
+1. **Clone the repository**:
+
+   - git clone https://github.com/NayimWd/NayimWd-PlantStoreApi
+   - cd ecommerce-backend
+- Install dependencies:
+- npm install
+Create a .env file:
+
+- add your environment variables:
 
 
-npm install
-Create a .env file and add the required environment variables as described in the Environment Variables section.
+-  MongoDB, Redis, and Stripe credentials, cloudinary, jwt secret to the .env file.**
 
-Run the application:
+Run the development server:
+
+Use nodemon for hot-reloading during development:
+
+
 npm run dev
-Access the app at https://furn-flora-api.vercel.app/api/v1/health
+The backend will be running on http://localhost:8000.
 
-🌱 Environment Variables
-Create a .env file in the root directory of your project and add the following environment variables:
+ ## API Documentation
+For detailed API documentation and usage, please refer to the project [documentation](https://app.swaggerhub.com/apis-docs/naimhasan/Plant_Store_Api/1.0.0) 
 
-plaintext
-Copy code
-PORT=8000
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
-CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-CLOUDINARY_API_KEY=your_cloudinary_api_key
-CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 
-📋 API Endpoints
-Health 
-/health
-Auth Routes
-POST /auth/register - Register a new user
-POST /auth/login - Login an existing user
-Product Routes
-GET /products - Get all products
-GET /products/:id - Get a single product
-POST /products - Create a new product (admin only)
-PUT /products/:id - Update a product (admin only)
-DELETE /products/:id - Delete a product (admin only)
-Order Routes
-POST /orders - Create a new order
-GET /orders/user/:id - Get order history for a user
+### Main Endpoints
+- POST /auth/register: Register a new user.
+- POST /auth/login: Log in and receive a JWT token.
+- GET /products: Get all products with pagination and filters (category, size, price, etc.).
+- GET /products/{id}: Get a single product by its ID.
+- POST /cart/add: Add a product to the cart.
+- POST /wishlist/add: Add a product to the wishlist.
+- POST /order/create: Place an order from the cart or wishlist.
+- GET /order/{id}: Get details of a specific order.
+- GET /invoices: Get all invoices for a user (admin or user who owns the order).
+- GET /invoices/{id}: Get a single invoice by ID (with option to download as PDF).
+Payment Flow
+- For Cash on Delivery (COD), the order is placed immediately, and the payment status is set to "pending".
+- For Stripe payments, a payment intent is created, and the payment is processed. - Upon success, the order status is updated to "paid", and an invoice is generated.
+### Redis Caching
+- Redis is used for caching product data to reduce response times for frequently requested data.
+- Redis is configured for local development and can be used in production for better scalability.
+ ### Invoice Download
+- After placing an order, an invoice is automatically generated.
+- Users can download their invoice as a PDF from the /invoices/{id} endpoint.
 
-For more detailed information, check the API Documentation.
 
-🗂️ Folder Structure
-📦 plant-store
- ┣ 📂src
- ┃ ┣ 📂controllers
- ┃ ┣ 📂middlewares
- ┃ ┣ 📂models
- ┃ ┣ 📂routes
- ┃ ┣ 📂utils
- ┃ ┣ 📜constants.ts
- ┃ ┣ 📜index.ts
- ┃ ┗ 📜app.ts
- ┣ 📜.env
- ┣ 📜.gitignore
- ┣ 📜.prettierignore
- ┣ 📜.prettierrc
- ┣ 📜package.json
- ┗ 📜README.md
 
-📄 Documentation
-For detailed API documentation and usage, please refer to the project documentation.
+Thank you for checking out this project! If you have any questions or feedback, feel free to open an issue or contact me. 
 
-📝 License
-This project is licensed under the MIT License - see the LICENSE file for details.
+### Email
+ **nayim.wd@gmail.com**
+ ##
+### Linkedin
+
+**[Linkedin](https://www.linkedin.com/in/nayim-hasan/)**

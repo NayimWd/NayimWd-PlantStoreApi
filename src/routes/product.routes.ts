@@ -1,13 +1,14 @@
 import { Router } from "express";
 import {
   category,
+  getCategory,
+  deleteCategory,
   createProduct,
   createRatings,
   deleteProduct,
   deleteProduct_Reviews,
   getAllProducts,
   getAllReviewsOfProduct,
-  getCategory,
   getSingleProduct,
   updateProductPhoto,
   updateProductsDetails,
@@ -26,6 +27,7 @@ const router: Router = Router();
 
 interface Iproduct {
   category: "/create_category";
+  delete_category: "/delete_category";
   find_cetegory: "/category";
   create_product: "/create_product";
   getSingle_product: "/getSingle_Product/:pid";
@@ -41,6 +43,7 @@ interface Iproduct {
 
 const product_routes: Iproduct = {
   category: "/create_category",
+  delete_category: "/delete_category",
   find_cetegory: "/category",
   create_product: "/create_product",
   getSingle_product: "/getSingle_Product/:pid",
@@ -58,6 +61,10 @@ const product_routes: Iproduct = {
 router
   .route(product_routes.category)
   .post(veryfyJWT, isAdmin, zodValidator(ZodcategorySchema), category);
+
+// delete category
+router.route(product_routes.delete_category).delete(veryfyJWT, isAdmin, deleteCategory)
+
 // get all categoroy
 router.route(product_routes.find_cetegory).get(getCategory);
 // create new product
@@ -83,7 +90,7 @@ router
 // create product ratings
 router.route(product_routes.create_product_ratings).post(veryfyJWT, createRatings);
 // get all reviews of product
-router.route(product_routes.get_all_reviews).get(getAllReviewsOfProduct);
+router.route(product_routes.get_all_reviews).get(cacheMiddleware, getAllReviewsOfProduct);
 // update reviews of product
 router.route(product_routes.update_product_review).put(veryfyJWT, updateReview);
 // delete product review

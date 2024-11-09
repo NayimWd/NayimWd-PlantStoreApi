@@ -1,4 +1,4 @@
-import { category, getCategory } from "./createCategory.controller";
+import { category, getCategory, deleteCategory } from "./createCategory.controller";
 import { createProduct } from "./createProduct.controller";
 import { getSingleProduct, getAllProducts } from "./getProducts.controller";
 import { updateProductPhoto, updateProductsDetails } from "./updateProduct.controller";
@@ -8,6 +8,7 @@ import { createRatings, getAllReviewsOfProduct, updateReview, deleteProduct_Revi
 
 export {
     category,
+    deleteCategory,
     getCategory,
     createProduct,
     getSingleProduct,

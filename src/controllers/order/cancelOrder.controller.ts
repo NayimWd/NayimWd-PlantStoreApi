@@ -3,6 +3,7 @@ import { Product } from "../../models/productModel/product.model";
 import { ApiError } from "../../utils/ApiError";
 import { ApiResponse } from "../../utils/ApiResponse";
 import { asyncHandler } from "../../utils/asyncHandler";
+import { invalidateCache } from "../../utils/cacheUtils";
 
 export const cancelOrder = asyncHandler(async (req, res) => {
   // get user and admin
@@ -42,6 +43,9 @@ export const cancelOrder = asyncHandler(async (req, res) => {
       $inc: { stock: item.qty },
     });
   }
+
+   // Clear the Redis cache after cancel order (get all products query)
+   await invalidateCache("products:*")
 
   return res
     .status(200)

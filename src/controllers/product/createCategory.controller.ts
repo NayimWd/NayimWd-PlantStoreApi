@@ -3,6 +3,7 @@ import { ApiError } from "../../utils/ApiError";
 import { ApiResponse } from "../../utils/ApiResponse";
 import { asyncHandler } from "../../utils/asyncHandler";
 
+// create category
 export const category = asyncHandler(async (req, res) => {
   // get category name from req.body
   const { name } = req.body;
@@ -26,7 +27,9 @@ export const category = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, postCategory, "Category created successfully"));
 });
 
+// get all cetegory
 export const getCategory = asyncHandler(async (req, res) => {
+
   // get categoris
   const categories = await Category.find();
 
@@ -41,3 +44,20 @@ export const getCategory = asyncHandler(async (req, res) => {
     )
   );
 });
+
+// delete category
+export const deleteCategory = asyncHandler(async(req, res)=>{
+  // get category id
+  const {categoryId} = req.params;
+
+  if(!categoryId){
+    throw new ApiError(400, "category ID not found");
+  }
+  // delete category
+  const deleteCategory = await Category.findByIdAndDelete(categoryId);
+
+  if(!deleteCategory){
+    throw new ApiError(400, "Something went wrong deleting category")
+  }
+
+})

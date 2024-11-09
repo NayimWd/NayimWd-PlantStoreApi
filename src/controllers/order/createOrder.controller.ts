@@ -8,6 +8,7 @@ import { Wishlist } from "../../models/wishlistModel/wishlist.model";
 import { stripe } from "../../config/stripeConfig";
 import { Invoice } from "../../models/paymentModel/invoice.model";
 import { User } from "../../models/userModel/user.model";
+import { invalidateCache } from "../../utils/cacheUtils";
 
 export const createOrderFromCart = asyncHandler(async (req, res) => {
   const userId = (req as any).user._id;
@@ -106,6 +107,10 @@ export const createOrderFromCart = asyncHandler(async (req, res) => {
       $inc: { stock: -(item as any).quantity },
     });
   }
+
+   // Clear the Redis cache after place order (get all products query)
+   await invalidateCache("products:*")
+
   // clear cart after order
   await Cart.findOneAndDelete({ addedBy: userId });
 
@@ -116,6 +121,8 @@ export const createOrderFromCart = asyncHandler(async (req, res) => {
     .status(201)
     .json(new ApiResponse(201, order, "Order placed successfully"));
 });
+
+ 
 
 export const createOrderfromWishlist = asyncHandler(async (req, res) => {
   const userId = (req as any).user;
@@ -222,6 +229,10 @@ export const createOrderfromWishlist = asyncHandler(async (req, res) => {
       $inc: { stock: -1 },
     });
   }
+
+
+   // Clear the Redis cache after place order (get all products query)
+   await invalidateCache("products:*")
 
   // clear wishlist
   await Wishlist.findOneAndDelete({ listedBy: userId });
